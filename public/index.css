@@ -154,8 +154,9 @@ input[type="checkbox"]:checked + .slider:before {
 }
 
 /*cant get switch-label.dark-mode to work? not sure why*/
-.switch-label {
-  color: #ccc;
+
+.chatinput-container {
+  padding-top: 20px;
 }
 
 
