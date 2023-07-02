@@ -21,16 +21,16 @@ function newchat() {
 
 function updateoraddchat(thischat){
     const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
+    const insidehtml = `Chatter ${thischat.userid} : ${thischat.message}`;
     if (!chatElement){
         const div = document.createElement("div");
         div.dataset.id = thischat.uuid;
-        insertHTML(div, `
-            Chatter ${thischat.userid} : ${thischat.message}
-            `);
+        insertHTML(div, insidehtml
+            );
         chats.appendChild(div);
     }
     else{
-        chatElement.innerHTML = `Chatter ${thischat.userid} : ${thischat.message}`;
+        chatElement.innerHTML = insidehtml;
     }
 
 
