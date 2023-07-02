@@ -60,7 +60,8 @@ textinput.addEventListener("input", () => {
 })
 
 // Connection opened
-socket.addEventListener("open", (event) => { socket.send("bruh Server!"); });
+socket.addEventListener("open", (event) => { console.log("opened websocket"); });
+socket.addEventListener("closed", (event) => { console.log("closed websocket"); });
 
 // Listen for messages
 socket.addEventListener("message", async (event) => {
