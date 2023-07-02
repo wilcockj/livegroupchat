@@ -17,7 +17,9 @@ else{
 }
 const textinput = document.getElementById("chatinput");
 const nameinput = document.getElementById("nameinput");
+const namedisplay = document.getElementById("curname");
 const chats = document.querySelector('[data-chat="chats"]')
+chats.scrollIntoView(false);
 const connstatus = document.querySelector('[data-chat="connectionstatus"]')
 let user = {useruuid: crypto.randomUUID(), username:""}
 
@@ -46,7 +48,7 @@ function updateoraddchat(thischat){
         }
 
         div.textContent = chatlog;
-        chats.appendChild(div);
+        chats.querySelector('div').appendChild(div);
     }
     else{
         chatElement.textContent = chatlog;
@@ -94,6 +96,7 @@ nameinput.addEventListener('keyup', function(e) {
     user.username = nameinput.value;
     nameinput.value = "";
     chat.username = user.username;
+    namedisplay.innerText = "Your name is: " + user.username;
   }
 });
 

@@ -2,6 +2,7 @@
 <head>
 
     <link rel="stylesheet" href="index.css">
+    <script type="module" src="chat.js"></script> 
 </head>
 
 <body>
@@ -10,9 +11,16 @@
     <label class="nameinput">Enter your name here</label>
     <input id="nameinput"/>
     </div>
-    <div data-chat="chats">
+    <div>
+    <label id="curname">Your name is: Anonymous</label>
     </div>
+    <div data-chat="chats">
+        <div>
+        </div>
+    </div>
+    <div>
+    <label>Enter your message here:</label>
     <input id="chatinput" />
-    <script type="module" src="chat.js"></script> 
+    </div>
 </body>
 
