@@ -7,11 +7,11 @@
     color: #bf2c45;
 }
 
-[data-active="true"] {
+div[data-active="true"] {
   font-weight: bold;
 }
 
-[data-active="false"] {
+div[data-active="false"] {
   font-weight: normal;
 }
 

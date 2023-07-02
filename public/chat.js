@@ -22,14 +22,14 @@ const userid = crypto.randomUUID()
 
 function newchat() {
   const uuid = crypto.randomUUID()
-  let chat = {uuid : uuid, message : "", timestamp : Date.now(), finished : false, userid: userid};
+  let chat = {uuid : uuid, message : "", timestamp : Date.now(), finished : false, userid: userid, username: ""};
   return chat;
 }
 
 function updateoraddchat(thischat){
-    // TODO make the active dataset only on client
+    // TODO add username input
     const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
-    const chatlog = `Chatter ${thischat.userid} : ${thischat.message}`;
+    const chatlog = `Chatter Anon: ${thischat.message}`;
     if (!chatElement){
         const div = document.createElement("div");
         div.dataset.id = thischat.uuid;
