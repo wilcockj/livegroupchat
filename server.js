@@ -3,15 +3,17 @@ const https = require('https');
 const http = require('http');
 const fs = require('fs');
 const express = require('express');
-const port = 443; // Replace with the desired port number
+const PORT = 443;
 
 const serverOptions = {
-  cert : fs.readFileSync('./certificate.pem'),
-  key : fs.readFileSync('./private-key.pem')
+  cert : fs.readFileSync('./cert.pem'),
+  key : fs.readFileSync('./key.pem')
 };
 
 const app = express();
 app.use(express.static('public'));
+app.get("/", (req, res) => res.sendFile(`/index.html`))
+
 const server = http.createServer(app, serverOptions);
 
 const wss = new WebSocket.WebSocketServer({server});
@@ -38,7 +40,7 @@ wss.on('connection', (ws) => {
 
 // app.listen(port, () => { console.log(`Server is running on port ${port}`);
 // });
-server.listen(8080);
+server.listen(PORT, console.log(`server running on port ${PORT}`));
 // Start the server
 // app.listen(port, () => { console.log(`Server is running on port ${port}`);
 // });

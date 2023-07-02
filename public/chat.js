@@ -11,11 +11,29 @@ import {delegate, getURLHash, insertHTML, replaceHTML} from "./helpers.js";
 const socket = new WebSocket(`ws://${location.host}`);
 const textinput = document.getElementById("chatinput");
 const chats = document.querySelector('[data-chat="chats"]')
+const userid = crypto.randomUUID()
 
 function newchat() {
   const uuid = crypto.randomUUID()
-  let chat = {uuid : uuid, message : "", timestamp : Date.now(), finished : false};
+  let chat = {uuid : uuid, message : "", timestamp : Date.now(), finished : false, userid: userid};
   return chat;
+}
+
+function updateoraddchat(thischat){
+    const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
+    if (!chatElement){
+        const div = document.createElement("div");
+        div.dataset.id = thischat.uuid;
+        insertHTML(div, `
+            Chatter ${thischat.userid} : ${thischat.message}
+            `);
+        chats.appendChild(div);
+    }
+    else{
+        chatElement.innerHTML = `Chatter ${thischat.userid} : ${thischat.message}`;
+    }
+
+
 }
 
 let chat = newchat();
@@ -35,6 +53,8 @@ textinput.addEventListener("input", () => {
   chat.message = textinput.value;
   console.log(chat);
   if (!chat.finished && chat.message.length) {
+
+    updateoraddchat(chat);
     socket.send(JSON.stringify(chat));
   }
 })
@@ -55,20 +75,7 @@ socket.addEventListener("message", async (event) => {
 
     
 
-    const chatElement = document.querySelector(`div[data-id="${result.uuid}"]`);
-    if (!chatElement){
-        const div = document.createElement("div");
-        div.dataset.id = result.uuid;
-        insertHTML(div, `
-            Chatter ${result.uuid} : ${result.message}
-            `);
-        chats.appendChild(div);
-    }
-    else{
-        chatElement.innerHTML = `Chatter ${result.uuid} : ${result.message}`;
-    }
-
-
+    updateoraddchat(result);
   } catch (error) {
     // Handle any errors that occurred during decoding or parsing
     console.error(error);
