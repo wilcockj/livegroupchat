@@ -66,7 +66,7 @@ function updateoraddchat(thischat){
         var chatlog = `${thischat.username}: ${thischat.message}`;
     }
     else{
-        var chatlog = `Chatter Anon: ${thischat.message}`;
+        var chatlog = `Anon: ${thischat.message}`;
     }
     if (!chatElement){
         const div = document.createElement("div");

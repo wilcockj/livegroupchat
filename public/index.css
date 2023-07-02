@@ -12,6 +12,7 @@ label, input {
   
   .nameinput, #curname {
     text-align: center;
+    border: solid;
   }
   
   #curname {
@@ -20,11 +21,11 @@ label, input {
   
   #chatinput {
     width: 100%;
+    border: solid;
   }
 
   div[data-active="true"] {
     font-weight: 900;
-    color:
   }
 
   div[data-chat="chats"] {
