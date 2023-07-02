@@ -23,6 +23,37 @@ chats.scrollIntoView(false);
 const connstatus = document.querySelector('[data-chat="connectionstatus"]')
 let user = {useruuid: crypto.randomUUID(), username:""}
 
+const darkModeSwitch = document.getElementById('darkModeSwitch');
+const body = document.body;
+const localStorageKey = 'darkModeEnabled';
+
+// Function to set the dark mode state
+function setDarkModeState(enabled) {
+  if (enabled) {
+    body.classList.add('dark-mode');
+    darkModeSwitch.checked = true;
+    localStorage.setItem(localStorageKey, 'true');
+  } else {
+    body.classList.remove('dark-mode');
+    darkModeSwitch.checked = false;
+    localStorage.setItem(localStorageKey, 'false');
+  }
+}
+
+// Function to toggle the dark mode state
+function toggleDarkMode() {
+  const darkModeEnabled = localStorage.getItem(localStorageKey) === 'true';
+  setDarkModeState(!darkModeEnabled);
+}
+
+// Event listener for the dark mode switch
+darkModeSwitch.addEventListener('change', toggleDarkMode);
+
+// Check the initial dark mode state from the stored preference
+const initialDarkModeEnabled = localStorage.getItem(localStorageKey) === 'true';
+setDarkModeState(initialDarkModeEnabled);
+
+
 function newchat() {
   const uuid = crypto.randomUUID()
   let chat = {uuid : uuid, message : "", timestamp : Date.now(), finished : false, userid: user.useruuid, username: user.username};
@@ -32,7 +63,7 @@ function newchat() {
 function updateoraddchat(thischat){
     const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
     if (thischat.username != ""){
-        var chatlog = `Chatter ${thischat.username}: ${thischat.message}`;
+        var chatlog = `${thischat.username}: ${thischat.message}`;
     }
     else{
         var chatlog = `Chatter Anon: ${thischat.message}`;
