@@ -3,18 +3,18 @@ const https = require('https');
 const http = require('http');
 const fs = require('fs');
 const express = require('express');
-const PORT = 443;
+const PORT = 8080;
 
 const serverOptions = {
-  cert : fs.readFileSync('./cert.pem'),
-  key : fs.readFileSync('./key.pem')
+  cert : fs.readFileSync('cert.pem'),
+  key : fs.readFileSync('key.pem')
 };
 
 const app = express();
 app.use(express.static('public'));
 app.get("/", (req, res) => res.sendFile(`/index.html`))
 
-const server = http.createServer(app, serverOptions);
+const server = https.createServer(serverOptions, app);
 
 const wss = new WebSocket.WebSocketServer({server});
 
