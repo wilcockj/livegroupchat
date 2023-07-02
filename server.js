@@ -3,11 +3,11 @@ const https = require('https');
 const http = require('http');
 const fs = require('fs');
 const express = require('express');
-const PORT = 8080;
+const PORT = 443;
 
 const serverOptions = {
-  cert : fs.readFileSync('cert.pem'),
-  key : fs.readFileSync('key.pem')
+  cert : fs.readFileSync('/etc/letsencrypt/live/swiftnotes.net/fullchain.pem'),
+  key : fs.readFileSync('/etc/letsencrypt/live/swiftnotes.net/privkey.pem'),
 };
 
 const app = express();
@@ -41,6 +41,12 @@ wss.on('connection', (ws) => {
 // app.listen(port, () => { console.log(`Server is running on port ${port}`);
 // });
 server.listen(PORT, console.log(`server running on port ${PORT}`));
+http.createServer(function(req, res) {
+      res.writeHead(301,
+                    {"Location" : "https://" + req.headers['host'] + req.url});
+      res.end();
+    })
+    .listen(80);
 // Start the server
 // app.listen(port, () => { console.log(`Server is running on port ${port}`);
 // });
