@@ -17,6 +17,7 @@ else{
 }
 const textinput = document.getElementById("chatinput");
 const chats = document.querySelector('[data-chat="chats"]')
+const connstatus = document.querySelector('[data-chat="connectionstatus"]')
 const userid = crypto.randomUUID()
 
 function newchat() {
@@ -26,16 +27,27 @@ function newchat() {
 }
 
 function updateoraddchat(thischat){
+    // TODO make the active dataset only on client
     const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
     const chatlog = `Chatter ${thischat.userid} : ${thischat.message}`;
     if (!chatElement){
         const div = document.createElement("div");
         div.dataset.id = thischat.uuid;
+        if (thischat.userid == userid){
+            div.dataset.active = !thischat.finished;
+        }
+        else{
+            div.dataset.active = false;
+        }
+
         div.textContent = chatlog;
         chats.appendChild(div);
     }
     else{
         chatElement.textContent = chatlog;
+        if (thischat.userid == userid){
+            chatElement.dataset.active = !thischat.finished;
+        }
     }
 
 
@@ -52,6 +64,8 @@ textinput.addEventListener('keyup', function(e) {
   if (e.key === 'Enter' && e.target.value.length) {
     // Do something
     chat.finished = true;
+    const chatElement = document.querySelector(`div[data-id="${chat.uuid}"]`);
+    chatElement.dataset.active = false;
     console.log("finished chat ", chat.timestamp);
     socket.send(JSON.stringify(chat));
     textinput.value = "";
@@ -70,7 +84,10 @@ textinput.addEventListener("input", () => {
 })
 
 // Connection opened
-socket.addEventListener("open", (event) => { console.log("opened websocket"); } );
+socket.addEventListener("open", (event) => { 
+                                            connstatus.className = "conn";
+                                            connstatus.textContent = "Connected";
+                                            console.log("opened websocket"); } );
 socket.addEventListener("closed", (event) => { console.log("closed websocket"); 
 clearInterval(pingInterval);});
 

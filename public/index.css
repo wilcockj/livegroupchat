@@ -1,0 +1,17 @@
+.conn{
+    color: #0cc95e;
+}
+
+
+.notconn{
+    color: #bf2c45;
+}
+
+[data-active="true"] {
+  font-weight: bold;
+}
+
+[data-active="false"] {
+  font-weight: normal;
+}
+
