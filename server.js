@@ -13,6 +13,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 if (process.env.NODE_ENV === 'production'){
+    console.log("starting production server");
     app.use(express.static('public'));
     const serverOptions = {
       cert : fs.readFileSync('/etc/letsencrypt/live/swiftnotes.net/fullchain.pem'),
