@@ -3,18 +3,27 @@ const https = require('https');
 const http = require('http');
 const fs = require('fs');
 const express = require('express');
+const app = express();
 const PORT = 443;
 
-const serverOptions = {
-  cert : fs.readFileSync('/etc/letsencrypt/live/swiftnotes.net/fullchain.pem'),
-  key : fs.readFileSync('/etc/letsencrypt/live/swiftnotes.net/privkey.pem'),
-};
+if (process.env.NODE_ENV === 'development') {
+  console.log("starting dev server");
+  app.use(express.static('public'));
+  var server = http.createServer(app);
+}
 
-const app = express();
-app.use(express.static('public'));
+if (process.env.NODE_ENV === 'production'){
+    app.use(express.static('public'));
+    const serverOptions = {
+      cert : fs.readFileSync('/etc/letsencrypt/live/swiftnotes.net/fullchain.pem'),
+      key : fs.readFileSync('/etc/letsencrypt/live/swiftnotes.net/privkey.pem'),
+    };
+    var server = https.createServer(serverOptions, app);
+}
+
+
 app.get("/", (req, res) => res.sendFile(`/index.html`))
 
-const server = https.createServer(serverOptions, app);
 
 const wss = new WebSocket.WebSocketServer({server});
 

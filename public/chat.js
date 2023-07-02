@@ -36,6 +36,11 @@ function updateoraddchat(thischat){
 
 }
 
+const ping = function() {
+  ws.ping(noop);
+}
+
+
 let chat = newchat();
 
 textinput.addEventListener('keyup', function(e) {
@@ -52,7 +57,7 @@ textinput.addEventListener('keyup', function(e) {
 textinput.addEventListener("input", () => {
   chat.message = textinput.value;
   console.log(chat);
-  if (!chat.finished && chat.message.length) {
+  if (!chat.finished) {
 
     updateoraddchat(chat);
     socket.send(JSON.stringify(chat));
@@ -73,12 +78,11 @@ socket.addEventListener("message", async (event) => {
     // if result.uuid not in chats make new chat, and update with text
     // if exists update client chat with new text, or if marked as done, note
     // that
-
-    
-
     updateoraddchat(result);
   } catch (error) {
     // Handle any errors that occurred during decoding or parsing
     console.error(error);
   }
 });
+
+setInterval(ping, 30000);
