@@ -8,7 +8,12 @@ import {delegate, getURLHash, insertHTML, replaceHTML} from "./helpers.js";
 // when the user presses enter, clear the text input and generate a new
 // uuid/ timestamp to indicate a new chat message
 
-const socket = new WebSocket(`wss://${location.host}`);
+if (location.hostname == 'localhost'){
+    var socket = new WebSocket(`ws://${location.host}`);
+}
+else{
+    var socket = new WebSocket(`wss://${location.host}`);
+}
 const textinput = document.getElementById("chatinput");
 const chats = document.querySelector('[data-chat="chats"]')
 const userid = crypto.randomUUID()

@@ -4,15 +4,17 @@ const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const app = express();
-const PORT = 443;
 
 if (process.env.NODE_ENV === 'development') {
+  var PORT = 8089;
   console.log("starting dev server");
   app.use(express.static('public'));
   var server = http.createServer(app);
 }
 
 if (process.env.NODE_ENV === 'production'){
+
+    var PORT = 443;
     console.log("starting production server");
     app.use(express.static('public'));
     const serverOptions = {
