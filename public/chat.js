@@ -42,7 +42,7 @@ function updateoraddchat(thischat){
 }
 
 const ping = function() {
-  ws.ping(noop);
+  socket.ping(noop);
 }
 
 
