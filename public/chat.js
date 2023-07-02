@@ -8,7 +8,7 @@ import {delegate, getURLHash, insertHTML, replaceHTML} from "./helpers.js";
 // when the user presses enter, clear the text input and generate a new
 // uuid/ timestamp to indicate a new chat message
 
-const socket = new WebSocket("ws://localhost:8089");
+const socket = new WebSocket(`ws://${location.host}`);
 const textinput = document.getElementById("chatinput");
 const chats = document.querySelector('[data-chat="chats"]')
 
