@@ -35,9 +35,14 @@ wss.on('connection', (ws) => {
 
   ws.on('message', (message) => {
     console.log('Received message:', message);
-    console.log('Message in string form:', String.fromCodePoint(...message));
+    var strmessage = String.fromCodePoint(...message);
+    console.log('Message in string form:', strmessage);
     // Process the received message here or broadcast it to other connected
     // clients
+    if (strmessage == '__ping__'){
+        ws.send('__pong__');
+        return;
+    }
     wss.clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
         client.send(message);

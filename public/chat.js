@@ -8,6 +8,7 @@ import {delegate, getURLHash, insertHTML, replaceHTML} from "./helpers.js";
 // when the user presses enter, clear the text input and generate a new
 // uuid/ timestamp to indicate a new chat message
 
+// Need to do ws:// when testing on localhost
 if (location.hostname == 'localhost'){
     var socket = new WebSocket(`ws://${location.host}`);
 }
@@ -41,9 +42,9 @@ function updateoraddchat(thischat){
 
 }
 
-const ping = function() {
-  socket.ping("__ping__");
-}
+const pingInterval = setInterval(() => {
+  socket.send("__ping__");
+}, 20000);
 
 
 let chat = newchat();
@@ -70,13 +71,18 @@ textinput.addEventListener("input", () => {
 })
 
 // Connection opened
-socket.addEventListener("open", (event) => { console.log("opened websocket"); });
-socket.addEventListener("closed", (event) => { console.log("closed websocket"); });
+socket.addEventListener("open", (event) => { console.log("opened websocket"); } );
+socket.addEventListener("closed", (event) => { console.log("closed websocket"); 
+clearInterval(pingInterval);});
 
 // Listen for messages
 socket.addEventListener("message", async (event) => {
   try {
     const blob = event.data; // Assuming event.data contains your Blob object
+    if (blob == '__pong__'){
+        console.log("got pong");
+        return;
+    }
     const response = new Response(blob);
     const result = await response.json();
     console.log(result); // Access the decoded JSON object
@@ -90,4 +96,4 @@ socket.addEventListener("message", async (event) => {
   }
 });
 
-setInterval(ping, 30000);
+
