@@ -1,0 +1,76 @@
+import {delegate, getURLHash, insertHTML, replaceHTML} from "./helpers.js";
+// Create WebSocket connection.
+// Plan is to send object with uuid, maybe timestamp of start of chat
+// and message to server, which can then broadcast the change
+// and update the state of the client with the new changes to
+// existing chats and new chats
+//
+// when the user presses enter, clear the text input and generate a new
+// uuid/ timestamp to indicate a new chat message
+
+const socket = new WebSocket("ws://localhost:8089");
+const textinput = document.getElementById("chatinput");
+const chats = document.querySelector('[data-chat="chats"]')
+
+function newchat() {
+  const uuid = crypto.randomUUID()
+  let chat = {uuid : uuid, message : "", timestamp : Date.now(), finished : false};
+  return chat;
+}
+
+let chat = newchat();
+
+textinput.addEventListener('keyup', function(e) {
+  if (e.key === 'Enter' && e.target.value.length) {
+    // Do something
+    chat.finished = true;
+    console.log("finished chat ", chat.timestamp);
+    socket.send(JSON.stringify(chat));
+    textinput.value = "";
+    chat = newchat();
+  }
+});
+
+textinput.addEventListener("input", () => {
+  chat.message = textinput.value;
+  console.log(chat);
+  if (!chat.finished && chat.message.length) {
+    socket.send(JSON.stringify(chat));
+  }
+})
+
+// Connection opened
+socket.addEventListener("open", (event) => { socket.send("bruh Server!"); });
+
+// Listen for messages
+socket.addEventListener("message", async (event) => {
+  try {
+    const blob = event.data; // Assuming event.data contains your Blob object
+    const response = new Response(blob);
+    const result = await response.json();
+    console.log(result); // Access the decoded JSON object
+    // if result.uuid not in chats make new chat, and update with text
+    // if exists update client chat with new text, or if marked as done, note
+    // that
+
+    
+
+    const chatElement = document.querySelector(`div[data-id="${result.uuid}"]`);
+    if (!chatElement){
+        const div = document.createElement("div");
+        div.dataset.id = result.uuid;
+        insertHTML(div, `
+            Chatter ${result.uuid} : ${result.message}
+            `);
+        chats.appendChild(div);
+    }
+    else{
+        chatElement.innerHTML = `Chatter ${result.uuid} : ${result.message}`;
+    }
+
+
+  } catch (error) {
+    // Handle any errors that occurred during decoding or parsing
+    console.error(error);
+  }
+});

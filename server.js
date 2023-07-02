@@ -19,3 +19,15 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => { console.log('WebSocket connection closed.'); });
 });
+
+const express = require('express');
+const app = express();
+const port = 8080; // Replace with the desired port number
+
+// Serve static files from the "public" directory
+app.use(express.static('public'));
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
