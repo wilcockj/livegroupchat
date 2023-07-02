@@ -43,7 +43,7 @@ function updateoraddchat(thischat){
 
 const pingInterval = setInterval(() => {
   socket.send("__ping__");
-}, 20000);
+}, 10000);
 
 
 let chat = newchat();
