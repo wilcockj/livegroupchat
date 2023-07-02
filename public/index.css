@@ -43,10 +43,6 @@ label, input {
     padding: 20px;
   }
   
-  .nameinput, #curname {
-    float: left;
-    width: 50%;
-  }
   
   div[data-chat="chats"] {
     width: 80%;
