@@ -16,24 +16,29 @@ else{
     var socket = new WebSocket(`wss://${location.host}`);
 }
 const textinput = document.getElementById("chatinput");
+const nameinput = document.getElementById("nameinput");
 const chats = document.querySelector('[data-chat="chats"]')
 const connstatus = document.querySelector('[data-chat="connectionstatus"]')
-const userid = crypto.randomUUID()
+let user = {useruuid: crypto.randomUUID(), username:""}
 
 function newchat() {
   const uuid = crypto.randomUUID()
-  let chat = {uuid : uuid, message : "", timestamp : Date.now(), finished : false, userid: userid, username: ""};
+  let chat = {uuid : uuid, message : "", timestamp : Date.now(), finished : false, userid: user.useruuid, username: user.username};
   return chat;
 }
 
 function updateoraddchat(thischat){
-    // TODO add username input
     const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
-    const chatlog = `Chatter Anon: ${thischat.message}`;
+    if (thischat.username != ""){
+        var chatlog = `Chatter ${thischat.username}: ${thischat.message}`;
+    }
+    else{
+        var chatlog = `Chatter Anon: ${thischat.message}`;
+    }
     if (!chatElement){
         const div = document.createElement("div");
         div.dataset.id = thischat.uuid;
-        if (thischat.userid == userid){
+        if (thischat.userid == user.useruuid){
             div.dataset.active = !thischat.finished;
         }
         else{
@@ -45,7 +50,7 @@ function updateoraddchat(thischat){
     }
     else{
         chatElement.textContent = chatlog;
-        if (thischat.userid == userid){
+        if (thischat.userid == user.useruuid){
             chatElement.dataset.active = !thischat.finished;
         }
     }
@@ -82,6 +87,15 @@ textinput.addEventListener("input", () => {
     socket.send(JSON.stringify(chat));
   }
 })
+
+nameinput.addEventListener('keyup', function(e) {
+
+  if (e.key === 'Enter' && e.target.value.length) {
+    user.username = nameinput.value;
+    nameinput.value = "";
+    chat.username = user.username;
+  }
+});
 
 // Connection opened
 socket.addEventListener("open", (event) => { 
