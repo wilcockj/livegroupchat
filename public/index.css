@@ -157,6 +157,7 @@ input[type="checkbox"]:checked + .slider:before {
   transform: translateX(20px);
 }
 
+/*cant get switch-label.dark-mode to work? not sure why*/
 .switch-label {
   color: #ccc;
 }
