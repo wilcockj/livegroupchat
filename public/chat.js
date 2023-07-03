@@ -43,7 +43,7 @@ function getSocket(){
       try {
         const blob = event.data; // Assuming event.data contains your Blob object
         if (blob == '__pong__'){
-            console.log("got pong took", lastpingsent-Date.now());
+            console.log("got pong took", Date.now()-lastpingsent, "ms");
             return;
         }
         const response = new Response(blob);
