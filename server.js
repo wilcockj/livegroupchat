@@ -33,7 +33,7 @@ const wss = new WebSocket.WebSocketServer({server});
 wss.on('connection', (ws,request) => {
   console.log('WebSocket connection established.');
 
-  console.log('Came from:', request.rawHeaders[1]);
+  console.log('Came from:', request.rawHeaders[13]);
   ws.on('message', (message) => {
     var strmessage = String.fromCodePoint(...message);
     console.log('Message in string form:', strmessage);
