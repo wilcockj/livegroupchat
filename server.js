@@ -30,16 +30,18 @@ app.get("/", (req, res) => res.sendFile(`/index.html`))
 
 const wss = new WebSocket.WebSocketServer({server});
 
-wss.on('connection', (ws,request) => {
+wss.on('connection', (ws,req) => {
   console.log('WebSocket connection established.');
 
-  console.log('Came from:', request.rawHeaders);
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log("Came from", ip);
   ws.on('message', (message) => {
     var strmessage = String.fromCodePoint(...message);
     console.log('Message in string form:', strmessage);
     // Process the received message here or broadcast it to other connected
     // clients
     if (strmessage == '__ping__'){
+        console.log("sending pong to ", ip);
         ws.send('__pong__');
         return;
     }
