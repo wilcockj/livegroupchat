@@ -67,10 +67,12 @@ label, input {
   
   div[data-active="true"] {
     font-weight: 900;
+    overflow-wrap: break-word
   }
   
   div[data-active="false"] {
     font-weight: normal;
+    overflow-wrap: break-word
   }
 }
 
