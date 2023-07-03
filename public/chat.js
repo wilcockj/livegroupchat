@@ -8,13 +8,6 @@ import {delegate, getURLHash, insertHTML, replaceHTML} from "./helpers.js";
 // when the user presses enter, clear the text input and generate a new
 // uuid/ timestamp to indicate a new chat message
 
-// Need to do ws:// when testing on localhost
-if (location.hostname == 'localhost'){
-    var socket = new WebSocket(`ws://${location.host}`);
-}
-else{
-    var socket = new WebSocket(`wss://${location.host}`);
-}
 const textinput = document.getElementById("chatinput");
 const nameinput = document.getElementById("nameinput");
 const namedisplay = document.getElementById("curname");
@@ -26,6 +19,48 @@ let user = {useruuid: crypto.randomUUID(), username:""}
 const darkModeSwitch = document.getElementById('darkModeSwitch');
 const body = document.body;
 const localStorageKey = 'darkModeEnabled';
+
+function getSocket(){
+    // Need to do ws:// when testing on localhost
+    if (location.hostname == 'localhost'){
+        var socket = new WebSocket(`ws://${location.host}`);
+    }
+    else{
+        var socket = new WebSocket(`wss://${location.host}`);
+    }
+
+    // Connection opened
+    socket.addEventListener("open", (event) => { 
+                                                connstatus.className = "conn";
+                                                connstatus.textContent = "Connected";
+                                                console.log("opened websocket"); } );
+    socket.addEventListener("closed", (event) => { console.log("closed websocket"); 
+    clearInterval(pingInterval);});
+
+    // Listen for messages
+    socket.addEventListener("message", async (event) => {
+      try {
+        const blob = event.data; // Assuming event.data contains your Blob object
+        if (blob == '__pong__'){
+            console.log("got pong");
+            return;
+        }
+        const response = new Response(blob);
+        const result = await response.json();
+        console.log(result); // Access the decoded JSON object
+        // if result.uuid not in chats make new chat, and update with text
+        // if exists update client chat with new text, or if marked as done, note
+        // that
+        updateoraddchat(result);
+      } catch (error) {
+        // Handle any errors that occurred during decoding or parsing
+        console.error(error);
+      }
+    });
+    return socket;
+}
+
+var socket = getSocket();
 
 // Function to set the dark mode state
 function setDarkModeState(enabled) {
@@ -92,7 +127,16 @@ function updateoraddchat(thischat){
 }
 
 const pingInterval = setInterval(() => {
-  socket.send("__ping__");
+  if(socket.readyState == 1){
+      socket.send("__ping__");
+  }
+  else{
+      // need to get new socket as errored
+      console.log("trying to reconnect");
+      connstatus.className = "notconn";
+      connstatus.textContent = "Not Connected";
+      socket = getSocket();
+  }
 }, 10000);
 
 
@@ -131,33 +175,5 @@ nameinput.addEventListener('keyup', function(e) {
   }
 });
 
-// Connection opened
-socket.addEventListener("open", (event) => { 
-                                            connstatus.className = "conn";
-                                            connstatus.textContent = "Connected";
-                                            console.log("opened websocket"); } );
-socket.addEventListener("closed", (event) => { console.log("closed websocket"); 
-clearInterval(pingInterval);});
-
-// Listen for messages
-socket.addEventListener("message", async (event) => {
-  try {
-    const blob = event.data; // Assuming event.data contains your Blob object
-    if (blob == '__pong__'){
-        console.log("got pong");
-        return;
-    }
-    const response = new Response(blob);
-    const result = await response.json();
-    console.log(result); // Access the decoded JSON object
-    // if result.uuid not in chats make new chat, and update with text
-    // if exists update client chat with new text, or if marked as done, note
-    // that
-    updateoraddchat(result);
-  } catch (error) {
-    // Handle any errors that occurred during decoding or parsing
-    console.error(error);
-  }
-});
 
 
