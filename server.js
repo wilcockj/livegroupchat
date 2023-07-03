@@ -48,6 +48,7 @@ wss.on('connection', (ws,req) => {
         ws.send('__pong__');
         return;
     }
+    console.log("Sending message to", wss.clients.size, "clients");
     wss.clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
         client.send(message);

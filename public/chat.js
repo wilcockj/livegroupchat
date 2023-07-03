@@ -96,6 +96,7 @@ function newchat() {
 }
 
 function updateoraddchat(thischat){
+    // TODO check message for and emote and if so add image tag with emote
     const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
     if (thischat.username != ""){
         var chatlog = `${thischat.username}: ${thischat.message}`;
