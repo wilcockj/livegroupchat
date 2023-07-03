@@ -19,6 +19,7 @@ let user = {useruuid: crypto.randomUUID(), username:""}
 const darkModeSwitch = document.getElementById('darkModeSwitch');
 const body = document.body;
 const localStorageKey = 'darkModeEnabled';
+var lastpingsent = 0;
 
 function getSocket(){
     // Need to do ws:// when testing on localhost
@@ -42,7 +43,7 @@ function getSocket(){
       try {
         const blob = event.data; // Assuming event.data contains your Blob object
         if (blob == '__pong__'){
-            console.log("got pong");
+            console.log("got pong took", lastpingsent-Date.now());
             return;
         }
         const response = new Response(blob);
@@ -129,6 +130,7 @@ const pingInterval = setInterval(() => {
   if(socket.readyState == 1){
       console.log("sending ping");
       socket.send("__ping__");
+      lastpingsent = Date.now();
   }
   else{
       // need to get new socket as errored
