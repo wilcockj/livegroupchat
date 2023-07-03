@@ -1,3 +1,6 @@
+:root {
+  color-scheme: dark light;
+}
 /* Common styles for both light and dark modes */
 label, input {
   display: block;
@@ -7,7 +10,7 @@ label, input {
 /* Styles specific to mobile devices */
 @media (max-width: 767px) {
   body {
-    padding: 10px;
+    padding: 5px;
   }
   
   .nameinput, #curname {
@@ -21,7 +24,6 @@ label, input {
   
   #chatinput {
     width: 100%;
-    border: solid;
   }
 
   div[data-active="true"] {
@@ -79,11 +81,13 @@ body.dark-mode {
   color: #ffffff;
 }
 
-.notconn.dark-mode {
+.notconn {
+  font-weight: bold;
   color: #ff6b81;
 }
 
-.conn.dark-mode {
+.conn {
+  font-weight: bold;
   color: #32d74b;
 }
 
