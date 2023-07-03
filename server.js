@@ -4,6 +4,8 @@ const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const app = express();
+// Variable to keep track of active connections
+let activeConnections = 0;
 
 if (process.env.NODE_ENV === 'development') {
   var PORT = 8089;
@@ -31,8 +33,9 @@ app.get("/", (req, res) => res.sendFile(`/index.html`))
 const wss = new WebSocket.WebSocketServer({server});
 
 wss.on('connection', (ws,req) => {
-  console.log('WebSocket connection established.');
-
+  activeConnections++;
+  const memused = process.memoryUsage().rss / 1024 / 1024
+  console.log('WebSocket connection established. Now have', activeConnections, 'connections, using' , memused, 'MB');
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   console.log("Came from", ip);
   ws.on('message', (message) => {
@@ -52,7 +55,10 @@ wss.on('connection', (ws,req) => {
     });
   });
 
-  ws.on('close', () => { console.log('WebSocket connection closed.'); });
+  ws.on('close', () => { 
+      activeConnections--;
+      console.log('WebSocket connection closed.');
+    });
 });
 
 // Serve static files from the "public" directory
