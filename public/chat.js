@@ -127,16 +127,18 @@ function updateoraddchat(thischat){
 
 const pingInterval = setInterval(() => {
   if(socket.readyState == 1){
+      console.log("sending ping");
       socket.send("__ping__");
   }
   else{
       // need to get new socket as errored
+      console.log("socket state:",socket.readyState);
       console.log("trying to reconnect");
       connstatus.className = "notconn";
       connstatus.textContent = "Not Connected";
       socket = getSocket();
   }
-}, 10000);
+}, 5000);
 
 
 let chat = newchat();
