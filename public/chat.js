@@ -47,7 +47,6 @@ function getSocket(){
         }
         const response = new Response(blob);
         const result = await response.json();
-        console.log(result); // Access the decoded JSON object
         // if result.uuid not in chats make new chat, and update with text
         // if exists update client chat with new text, or if marked as done, note
         // that
@@ -157,7 +156,6 @@ textinput.addEventListener('keyup', function(e) {
 
 textinput.addEventListener("input", () => {
   chat.message = textinput.value;
-  console.log(chat);
   if (!chat.finished) {
 
     updateoraddchat(chat);

@@ -34,7 +34,6 @@ wss.on('connection', (ws) => {
   console.log('WebSocket connection established.');
 
   ws.on('message', (message) => {
-    console.log('Received message:', message);
     var strmessage = String.fromCodePoint(...message);
     console.log('Message in string form:', strmessage);
     // Process the received message here or broadcast it to other connected
