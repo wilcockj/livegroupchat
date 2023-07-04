@@ -133,7 +133,6 @@ function updateoraddchat(thischat) {
       // Use a regular expression to match the emote keyword surrounded by spaces or nothing
       const regex = new RegExp(`${escapeHtml(emoteKeyword)}($|\\s)`, 'g');
       chatlog = chatlog.replaceAll(regex, ` ${emoteImage} `);
-      console.log(chatlog);
     }
   }
 
