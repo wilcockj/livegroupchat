@@ -147,7 +147,7 @@ let chat = newchat();
 
 textinput.addEventListener("keyup", function (e) {
   if (e.key === "Enter" && e.target.value.length) {
-    // Do something
+    // Message was completed and can be marked as such
     chat.finished = true;
     const chatElement = document.querySelector(`div[data-id="${chat.uuid}"]`);
     chatElement.dataset.active = false;
@@ -168,6 +168,7 @@ textinput.addEventListener("input", () => {
 
 nameinput.addEventListener("keyup", function (e) {
   if (e.key === "Enter" && e.target.value.length) {
+    // Name was completed and is updated
     user.username = nameinput.value;
     nameinput.value = "";
     chat.username = user.username;
