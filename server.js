@@ -57,7 +57,9 @@ wss.on("connection", (ws, req) => {
     // Process the received message here or broadcast it to other connected
     // clients
     if (strmessage == "__ping__") {
-      console.log("sending pong to ", ip);
+      var time = new Date(Date.now()).toLocaleTimeString("en-US");
+      var date = new Date(Date.now()).toLocaleDateString("en-US");
+      console.log("sending pong to", ip, "timestamp", time, date);
       ws.send("__pong__");
       return;
     }
