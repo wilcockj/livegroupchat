@@ -6,17 +6,15 @@ const express = require('express');
 const app = express();
 // Variable to keep track of active connections
 let activeConnections = 0;
+const PORT = process.env.NODE_ENV === 'production' ? 443 : 8089;
 
 if (process.env.NODE_ENV === 'development') {
-  var PORT = 8089;
   console.log("starting dev server");
   app.use(express.static('public'));
   var server = http.createServer(app);
 }
 
 if (process.env.NODE_ENV === 'production'){
-
-    var PORT = 443;
     console.log("starting production server");
     app.use(express.static('public'));
     const serverOptions = {
@@ -62,10 +60,6 @@ wss.on('connection', (ws,req) => {
     });
 });
 
-// Serve static files from the "public" directory
-
-// app.listen(port, () => { console.log(`Server is running on port ${port}`);
-// });
 server.listen(PORT, console.log(`server running on port ${PORT}`));
 http.createServer(function(req, res) {
       res.writeHead(301,
@@ -73,11 +67,4 @@ http.createServer(function(req, res) {
       res.end();
     })
     .listen(80);
-// Start the server
-// app.listen(port, () => { console.log(`Server is running on port ${port}`);
-// });
 
-// server.on('request', app);
-// server.listen(port, () => { console.log("Server running on port ${port}");
-// });
-//  https.createServer(serverOptions, app).listen(8443);
