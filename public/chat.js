@@ -1,4 +1,4 @@
-import { delegate, getURLHash, insertHTML, replaceHTML } from "./helpers.js";
+import { delegate, getURLHash, insertHTML, replaceHTML, emotes} from "./helpers.js";
 // Create WebSocket connection.
 // Plan is to send object with uuid, maybe timestamp of start of chat
 // and message to server, which can then broadcast the change
@@ -111,12 +111,6 @@ function updateoraddchat(thischat) {
   } else {
     chatlog = `Anon: ${thischat.message}`;
   }
-
-  // Define the emote keywords and their corresponding image paths
-  const emotes = {
-    "pepega": "./emotes/pepega.webp",
-    // Add more emotes and their image paths as needed
-  };
 
   // Function to escape HTML entities
   function escapeHtml(text) {
