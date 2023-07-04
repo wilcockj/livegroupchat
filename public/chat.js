@@ -102,13 +102,43 @@ function newchat() {
 }
 
 function updateoraddchat(thischat) {
-  // TODO check message for and emote and if so add image tag with emote
+  // TODO check message for emotes and if so, add image tags with the emotes
   const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
+  let chatlog = '';
+
   if (thischat.username != "") {
-    var chatlog = `${thischat.username}: ${thischat.message}`;
+    chatlog = `${thischat.username}: ${thischat.message}`;
   } else {
-    var chatlog = `Anon: ${thischat.message}`;
+    chatlog = `Anon: ${thischat.message}`;
   }
+
+  // Define the emote keywords and their corresponding image paths
+  const emotes = {
+    "pepega": "emotes/pepega.webp",
+    // Add more emotes and their image paths as needed
+  };
+
+  // Function to escape HTML entities
+  function escapeHtml(text) {
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;',
+    };
+    return text.replace(/[&<>"']/g, (m) => map[m]);
+  }
+
+  // Replace emote keywords with image tags
+  for (const emoteKeyword in emotes) {
+    if (emotes.hasOwnProperty(emoteKeyword)) {
+      const emoteImagePath = emotes[emoteKeyword];
+      const emoteImage = `<img src="${emoteImagePath}" alt="${escapeHtml(emoteKeyword)}" />`;
+      chatlog = chatlog.split(escapeHtml(emoteKeyword)).join(emoteImage);
+    }
+  }
+
   if (!chatElement) {
     const div = document.createElement("div");
     div.dataset.id = thischat.uuid;
@@ -118,15 +148,16 @@ function updateoraddchat(thischat) {
       div.dataset.active = false;
     }
 
-    div.textContent = chatlog;
+    div.innerHTML = chatlog;
     chats.querySelector("div").appendChild(div);
   } else {
-    chatElement.textContent = chatlog;
+    chatElement.innerHTML = chatlog;
     if (thischat.userid == user.useruuid) {
       chatElement.dataset.active = !thischat.finished;
     }
   }
 }
+
 
 const pingInterval = setInterval(() => {
   if (socket.readyState == 1) {
