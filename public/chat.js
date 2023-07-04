@@ -20,7 +20,7 @@ const darkModeSwitch = document.getElementById("darkModeSwitch");
 const body = document.body;
 const localStorageKey = "darkModeEnabled";
 var lastpingsent = 0;
-
+Notification.requestPermission()
 function getSocket() {
   // Need to do ws:// when testing on localhost
   const socketProtocol = location.protocol.includes("https") ? "wss" : "ws";
@@ -190,6 +190,7 @@ textinput.addEventListener("input", () => {
   chat.message = textinput.value;
   if (!chat.finished) {
     updateoraddchat(chat);
+    
     socket.send(JSON.stringify(chat));
   }
 });

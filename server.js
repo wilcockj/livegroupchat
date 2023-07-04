@@ -4,6 +4,7 @@ const http = require("http");
 const fs = require("fs");
 const express = require("express");
 const app = express();
+const MAX_MESSAGE_LEN = 2000;
 // Variable to keep track of active connections
 let activeConnections = 0;
 const PORT = process.env.NODE_ENV === "production" ? 443 : 8089;
@@ -42,7 +43,17 @@ wss.on("connection", (ws, req) => {
   console.log("Came from", ip);
   ws.on("message", (message) => {
     var strmessage = String.fromCodePoint(...message);
-    console.log("Message in string form:", strmessage);
+    //console.log("Message in string form:", strmessage);
+    var jsonmessage = message;
+    try{
+        var js = JSON.parse(strmessage);
+        if (js.message.length > MAX_MESSAGE_LEN){
+            js.message = js.message.slice(0,MAX_MESSAGE_LEN);
+        }
+        jsonmessage = JSON.stringify(js);
+    }
+    catch {
+    }
     // Process the received message here or broadcast it to other connected
     // clients
     if (strmessage == "__ping__") {
@@ -53,7 +64,7 @@ wss.on("connection", (ws, req) => {
     console.log("Sending message to", wss.clients.size, "clients");
     wss.clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(message);
+        client.send(jsonmessage);
       }
     });
   });
