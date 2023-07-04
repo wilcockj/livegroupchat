@@ -128,11 +128,12 @@ function updateoraddchat(thischat) {
   for (const emoteKeyword in emotes) {
     if (emotes.hasOwnProperty(emoteKeyword)) {
       const emoteImagePath = emotes[emoteKeyword];
-      const emoteImage = `<img src="${escapeHtml(emoteImagePath)}" alt="${escapeHtml(emoteKeyword)}" />`;
+      const emoteImage = `<img height=19 src="${escapeHtml(emoteImagePath)}" alt="${escapeHtml(emoteKeyword)}" />`;
       
       // Use a regular expression to match the emote keyword surrounded by spaces or nothing
-      const regex = new RegExp(`(^|\\s)${escapeHtml(emoteKeyword)}($|\\s)`, 'g');
-      chatlog = chatlog.replace(regex, `$1${emoteImage}$2`);
+      const regex = new RegExp(`${escapeHtml(emoteKeyword)}($|\\s)`, 'g');
+      chatlog = chatlog.replaceAll(regex, `$1${emoteImage}`);
+      console.log(chatlog);
     }
   }
 
