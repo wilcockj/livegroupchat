@@ -13,9 +13,10 @@ label, input {
     padding: 5px;
   }
   
+  /*
   .nameinput, #curname {
     text-align: center;
-  }
+  }*/
   
   #curname {
     font-size: 18px;
