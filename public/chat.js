@@ -114,7 +114,7 @@ function updateoraddchat(thischat) {
 
   // Define the emote keywords and their corresponding image paths
   const emotes = {
-    "pepega": "emotes/pepega.webp",
+    "pepega": "./emotes/pepega.webp",
     // Add more emotes and their image paths as needed
   };
 
