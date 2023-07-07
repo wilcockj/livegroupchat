@@ -1,4 +1,10 @@
-import { delegate, getURLHash, insertHTML, replaceHTML, emotes} from "./helpers.js";
+import {
+  delegate,
+  getURLHash,
+  insertHTML,
+  replaceHTML,
+  emotes,
+} from "./helpers.js";
 // Create WebSocket connection.
 // Plan is to send object with uuid, maybe timestamp of start of chat
 // and message to server, which can then broadcast the change
@@ -12,6 +18,7 @@ const textinput = document.getElementById("chatinput");
 const nameinput = document.getElementById("nameinput");
 const namedisplay = document.getElementById("curname");
 const chats = document.querySelector('[data-chat="chats"]');
+const MAX_LENGTH = 2000;
 chats.scrollIntoView(false);
 const connstatus = document.querySelector('[data-chat="connectionstatus"]');
 let user = { useruuid: crypto.randomUUID(), username: "" };
@@ -104,7 +111,7 @@ function newchat() {
 function updateoraddchat(thischat) {
   // TODO check message for emotes and if so, add image tags with the emotes
   const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
-  let chatlog = '';
+  let chatlog = "";
 
   if (thischat.username != "") {
     chatlog = `${thischat.username}: ${thischat.message}`;
@@ -115,11 +122,11 @@ function updateoraddchat(thischat) {
   // Function to escape HTML entities
   function escapeHtml(text) {
     const map = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#039;',
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
     };
     return text.replace(/[&<>"']/g, (m) => map[m]);
   }
@@ -128,10 +135,12 @@ function updateoraddchat(thischat) {
   for (const emoteKeyword in emotes) {
     if (emotes.hasOwnProperty(emoteKeyword)) {
       const emoteImagePath = emotes[emoteKeyword];
-      const emoteImage = `<img height=19 src="${escapeHtml(emoteImagePath)}" alt="${escapeHtml(emoteKeyword)}" />`;
-      
+      const emoteImage = `<img height=19 src="${escapeHtml(
+        emoteImagePath
+      )}" alt="${escapeHtml(emoteKeyword)}" />`;
+
       // Use a regular expression to match the emote keyword surrounded by spaces or nothing
-      const regex = new RegExp(`${escapeHtml(emoteKeyword)}($|\\s)`, 'g');
+      const regex = new RegExp(`${escapeHtml(emoteKeyword)}($|\\s)`, "g");
       chatlog = chatlog.replaceAll(regex, ` ${emoteImage} `);
     }
   }
@@ -154,7 +163,6 @@ function updateoraddchat(thischat) {
     }
   }
 }
-
 
 const pingInterval = setInterval(() => {
   if (socket.readyState == 1) {
@@ -187,10 +195,15 @@ textinput.addEventListener("keyup", function (e) {
 });
 
 textinput.addEventListener("input", () => {
-  chat.message = textinput.value;
+  if (textinput.value.length >= MAX_LENGTH) {
+    alert("message is at max length");
+    return;
+  }
+
   if (!chat.finished) {
+    chat.message = textinput.value;
     updateoraddchat(chat);
-    
+
     socket.send(JSON.stringify(chat));
   }
 });
