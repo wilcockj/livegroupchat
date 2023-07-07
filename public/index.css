@@ -41,13 +41,13 @@ label, input {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    font-size: 12px;
+    font-size: 14px;
   }
   
   
   div[data-chat="chats"] {
     width: 80%;
-    height: 500px;
+    height: 380px;
     overflow: auto;
     border: solid;
     display: flex;
