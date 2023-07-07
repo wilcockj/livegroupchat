@@ -11,6 +11,7 @@ label, input {
 @media (max-width: 767px) {
   body {
     padding: 5px;
+    font-size: 12px;
   }
   
   /*
@@ -40,6 +41,7 @@ label, input {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    font-size: 12px;
   }
   
   
