@@ -113,12 +113,15 @@ function updateoraddchat(thischat) {
   const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
   let chatlog = "";
 
+  let now = new Date();
+
   if (thischat.username != "") {
     chatlog = `${thischat.username} : ${thischat.message}`;
   } else {
     chatlog = `Anon : ${thischat.message}`;
   }
 
+  chatlog = now.toTimeString().slice(0,8)+ " " + chatlog;
   // Function to escape HTML entities
   function escapeHtml(text) {
     const map = {
