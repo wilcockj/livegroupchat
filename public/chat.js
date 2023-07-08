@@ -108,22 +108,8 @@ function newchat() {
   return chat;
 }
 
-function updateoraddchat(thischat) {
-  // TODO check message for emotes and if so, add image tags with the emotes
-  const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
-  let chatlog = "";
-
-  let now = new Date();
-
-  if (thischat.username != "") {
-    chatlog = `${thischat.username} : ${thischat.message}`;
-  } else {
-    chatlog = `Anon : ${thischat.message}`;
-  }
-
-  chatlog = now.toTimeString().slice(0,8)+ " " + chatlog;
-  // Function to escape HTML entities
-  function escapeHtml(text) {
+function replaceEmoteKeywordWithImage(chatlog){
+    function escapeHtml(text) {
     const map = {
       "&": "&amp;",
       "<": "&lt;",
@@ -147,7 +133,25 @@ function updateoraddchat(thischat) {
       chatlog = chatlog.replaceAll(regex, ` ${emoteImage} `);
     }
   }
+  return chatlog;
+}
 
+function updateoraddchat(thischat) {
+  // TODO check message for emotes and if so, add image tags with the emotes
+  const chatElement = document.querySelector(`div[data-id="${thischat.uuid}"]`);
+  let chatlog = "";
+
+  let now = new Date();
+
+  if (thischat.username != "") {
+    chatlog = `${thischat.username} : ${thischat.message}`;
+  } else {
+    chatlog = `Anon : ${thischat.message}`;
+  }
+
+  chatlog = now.toTimeString().slice(0,8)+ " " + chatlog;
+  // Function to escape HTML entities
+  chatlog = replaceEmoteKeywordWithImage(chatlog);
   if (!chatElement) {
     const div = document.createElement("div");
     div.dataset.id = thischat.uuid;
@@ -217,6 +221,8 @@ nameinput.addEventListener("keyup", function (e) {
     user.username = nameinput.value;
     nameinput.value = "";
     chat.username = user.username;
-    namedisplay.innerText = "Your name is: " + user.username;
+
+    let nameoutputwithemote = replaceEmoteKeywordWithImage("Your name is: " + user.username);
+    namedisplay.innerHTML = nameoutputwithemote; 
   }
 });
