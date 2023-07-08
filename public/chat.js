@@ -26,6 +26,8 @@ let user = { useruuid: crypto.randomUUID(), username: "" };
 const darkModeSwitch = document.getElementById("darkModeSwitch");
 const body = document.body;
 const localStorageKey = "darkModeEnabled";
+const linkRegex = /(https?\:\/\/)?(www\.)?[^\s]+\.[^\s]+/g;
+
 var lastpingsent = 0;
 
 function getSocket() {
@@ -108,6 +110,24 @@ function newchat() {
   return chat;
 }
 
+function replacer(matched) {
+  let withProtocol = matched
+  
+  if(!withProtocol.startsWith("http")) {
+    withProtocol = "http://" + matched
+  }
+ 
+  const newStr = `<a
+    class="text-link"
+    href="${withProtocol}"
+  >
+    ${matched}
+  </a>`
+  
+  return newStr
+}
+
+
 function replaceEmoteKeywordWithImage(chatlog){
     function escapeHtml(text) {
     const map = {
@@ -152,6 +172,7 @@ function updateoraddchat(thischat) {
   chatlog = now.toTimeString().slice(0,8)+ " " + chatlog;
   // Function to escape HTML entities
   chatlog = replaceEmoteKeywordWithImage(chatlog);
+  chatlog = chatlog.replace(linkRegex, replacer);
   if (!chatElement) {
     const div = document.createElement("div");
     div.dataset.id = thischat.uuid;

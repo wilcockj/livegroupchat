@@ -41,7 +41,7 @@ label, input {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    font-size: 14px;
+    font-size: 18px;
   }
   
   
@@ -165,4 +165,14 @@ input[type="checkbox"]:checked + .slider:before {
   padding-top: 20px;
 }
 
+#text-target {
+  font-size: 20px;
+  padding: 20px;
+}
+
+.text-link {
+  color: #3ea6ff;
+  font-weight: bold;
+  margin-right: 2px;
+}
 
