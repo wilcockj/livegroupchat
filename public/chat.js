@@ -114,9 +114,9 @@ function updateoraddchat(thischat) {
   let chatlog = "";
 
   if (thischat.username != "") {
-    chatlog = `${thischat.username}: ${thischat.message}`;
+    chatlog = `${thischat.username} : ${thischat.message}`;
   } else {
-    chatlog = `Anon: ${thischat.message}`;
+    chatlog = `Anon : ${thischat.message}`;
   }
 
   // Function to escape HTML entities
