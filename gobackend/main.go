@@ -108,6 +108,7 @@ func printMemUsage() {
 
 	sizeOfClientsMap := unsafe.Sizeof(clients)
 	fmt.Printf("Clients map is taking: %d\n", sizeOfClientsMap)
+    fmt.Printf("Number of active connections: %d\n", activeConnections)
 
 }
 
