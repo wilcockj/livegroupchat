@@ -6,8 +6,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 	"sync"
-    "runtime"
+	"time"
+	"unsafe"
 )
 
 var activeConnections int = 0
@@ -29,7 +31,7 @@ type Message struct {
 }
 
 func bToMb(b uint64) uint64 {
-    return b / 1024 / 1024
+	return b / 1024 / 1024
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
@@ -39,9 +41,10 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	activeConnections++
-    var m runtime.MemStats
-    runtime.ReadMemStats(&m)
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
 	fmt.Println("Received WS connection request now we have", activeConnections, "connections using ", bToMb(m.TotalAlloc), " MiB")
+	printMemUsage()
 	ip := r.Header.Get("X-FORWARDED-FOR")
 	if ip == "" {
 		ip = r.RemoteAddr
@@ -58,7 +61,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		messageType, message, err := ws.ReadMessage()
 		if err != nil {
 			log.Printf("error: %v", err)
-            activeConnections--;
+			activeConnections--
 			delete(clients, ws)
 			break
 		}
@@ -87,10 +90,31 @@ func handleMessages() {
 			if err != nil {
 				log.Printf("error: %v", err)
 				client.Close()
-                activeConnections--
+				activeConnections--
 				delete(clients, client)
 			}
 		}
+	}
+}
+
+func printMemUsage() {
+	var memStats runtime.MemStats
+	runtime.ReadMemStats(&memStats)
+
+    fmt.Printf("Memory Usage:\n")
+    fmt.Printf("- Alloc: %.2f MB\n", float64(memStats.Alloc)/(1024*1024))
+    fmt.Printf("- TotalAlloc: %.2f MB\n", float64(memStats.TotalAlloc)/(1024*1024))
+    fmt.Printf("- Sys: %.2f MB\n", float64(memStats.Sys)/(1024*1024))
+
+	sizeOfClientsMap := unsafe.Sizeof(clients)
+	fmt.Printf("Clients map is taking: %d\n", sizeOfClientsMap)
+
+}
+
+func logMemoryUsage() {
+	for {
+		printMemUsage()
+		time.Sleep(30 * time.Second)
 	}
 }
 
@@ -106,6 +130,7 @@ func main() {
 	http.HandleFunc("/ws", wsHandler)
 
 	// start handling broadcast messages
+	go logMemoryUsage()
 	go handleMessages()
 
 	if os.Getenv("BACKEND_MODE") == "production" {

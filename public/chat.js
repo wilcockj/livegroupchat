@@ -29,6 +29,8 @@ const localStorageKey = "darkModeEnabled";
 const linkRegex = /(https?\:\/\/)?(www\.)?[^\s]+\.[^\s]+/g;
 
 var lastpingsent = 0;
+var initialbackoff = 2; // number of pingintervals to wait before trying new websocket
+                        // initially
 
 function getSocket() {
   // Need to do ws:// when testing on localhost
@@ -197,13 +199,19 @@ const pingInterval = setInterval(() => {
     console.log("sending ping");
     socket.send("__ping__");
     lastpingsent = Date.now();
-  } else {
+  } else if (lastpingsent != 0 || initialbackoff == 0) {
+    // if initial backoff is 0 we have tried that many
+    // times to wait with no communication
     // need to get new socket as errored
     console.log("socket state:", socket.readyState);
     console.log("trying to reconnect");
     connstatus.className = "notconn";
     connstatus.textContent = "Not Connected";
+    socket.close(); // close socket before retry
     socket = getSocket();
+  }
+  if (lastpingsent == 0 && initialbackoff > 0){
+      initialbackoff--; 
   }
 }, 4800 + Math.floor(Math.random() * 500) );
 
