@@ -119,6 +119,14 @@ func logMemoryUsage() {
 	}
 }
 
+func enableCoopCoep(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Cross-Origin-Embedder-Policy", "require-corp")
+        w.Header().Set("Cross-Origin-Opener-Policy", "same-origin")
+        next.ServeHTTP(w, r)
+    })
+}
+
 func main() {
 	var PORT string = "8089"
 	if os.Getenv("BACKEND_MODE") == "production" {
@@ -126,7 +134,7 @@ func main() {
 	}
 
 	fs := http.FileServer(http.Dir("./public"))
-	http.Handle("/", fs)
+	http.Handle("/", enableCoopCoep(fs))
 
 	http.HandleFunc("/ws", wsHandler)
 
