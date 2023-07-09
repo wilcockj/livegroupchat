@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"sync"
+    "runtime"
 )
 
 var activeConnections int = 0
@@ -27,6 +28,10 @@ type Message struct {
 	Message     []byte
 }
 
+func bToMb(b uint64) uint64 {
+    return b / 1024 / 1024
+}
+
 func wsHandler(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -34,7 +39,9 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	activeConnections++
-	fmt.Println("Received WS connection request now we have", activeConnections, "connections")
+    var m runtime.MemStats
+    runtime.ReadMemStats(&m)
+	fmt.Println("Received WS connection request now we have", activeConnections, "connections using ", bToMb(m.TotalAlloc), " MiB")
 	ip := r.Header.Get("X-FORWARDED-FOR")
 	if ip == "" {
 		ip = r.RemoteAddr
