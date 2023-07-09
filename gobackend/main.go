@@ -51,6 +51,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		messageType, message, err := ws.ReadMessage()
 		if err != nil {
 			log.Printf("error: %v", err)
+            activeConnections--;
 			delete(clients, ws)
 			break
 		}
