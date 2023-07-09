@@ -101,7 +101,7 @@ func main() {
 
 	if os.Getenv("BACKEND_MODE") == "production" {
 		fmt.Println("Starting production server on port", PORT)
-		log.Fatal(http.ListenAndServeTLS(":"+PORT, "/etc/letsencrypt/live/yourdomain/fullchain.pem", "/etc/letsencrypt/live/yourdomain/privkey.pem", nil))
+		log.Fatal(http.ListenAndServeTLS(":"+PORT, "/etc/letsencrypt/live/swiftnotes.net/fullchain.pem", "/etc/letsencrypt/live/swiftnotes.net/privkey.pem", nil))
 	} else {
 		fmt.Println("Starting dev server on port", PORT)
 		log.Fatal(http.ListenAndServe(":"+PORT, nil))
