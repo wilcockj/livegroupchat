@@ -87,6 +87,7 @@ func handleMessages() {
 			if err != nil {
 				log.Printf("error: %v", err)
 				client.Close()
+                activeConnections--
 				delete(clients, client)
 			}
 		}

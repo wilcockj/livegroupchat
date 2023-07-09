@@ -205,7 +205,7 @@ const pingInterval = setInterval(() => {
     connstatus.textContent = "Not Connected";
     socket = getSocket();
   }
-}, 5000);
+}, 4800 + Math.floor(Math.random() * 500) );
 
 let chat = newchat();
 
