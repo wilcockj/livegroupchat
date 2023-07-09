@@ -1,3 +1,4 @@
+git pull
 cd gobackend
 killall chatbackend
 go build
