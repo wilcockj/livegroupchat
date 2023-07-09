@@ -31,6 +31,8 @@ const linkRegex = /(https?\:\/\/)?(www\.)?[^\s]+\.[^\s]+/g;
 var lastpingsent = 0;
 var initialbackoff = 2; // number of pingintervals to wait before trying new websocket
                         // initially
+var pingIntervalWithJitter = 4800 + Math.floor(Math.random() * 500); 
+console.log("Ping interval is", pingIntervalWithJitter);
 
 function getSocket() {
   // Need to do ws:// when testing on localhost
@@ -213,7 +215,7 @@ const pingInterval = setInterval(() => {
   if (lastpingsent == 0 && initialbackoff > 0){
       initialbackoff--; 
   }
-}, 4800 + Math.floor(Math.random() * 500) );
+}, pingIntervalWithJitter);
 
 let chat = newchat();
 
