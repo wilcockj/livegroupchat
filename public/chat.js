@@ -33,7 +33,7 @@ var lastpingsent = 0;
 function getSocket() {
   // Need to do ws:// when testing on localhost
   const socketProtocol = location.protocol.includes("https") ? "wss" : "ws";
-  const socket = new WebSocket(`${socketProtocol}://${location.host}`);
+  const socket = new WebSocket(`${socketProtocol}://${location.host}/ws`);
 
   // Connection opened
   socket.addEventListener("open", (event) => {
@@ -110,7 +110,7 @@ function newchat() {
   return chat;
 }
 
-function replacer(matched) {
+function linkreplacer(matched) {
   let withProtocol = matched
   
   if(!withProtocol.startsWith("http")) {
@@ -171,8 +171,8 @@ function updateoraddchat(thischat) {
 
   chatlog = now.toTimeString().slice(0,8)+ " " + chatlog;
   // Function to escape HTML entities
+  chatlog = chatlog.replace(linkRegex, linkreplacer);
   chatlog = replaceEmoteKeywordWithImage(chatlog);
-  chatlog = chatlog.replace(linkRegex, replacer);
   if (!chatElement) {
     const div = document.createElement("div");
     div.dataset.id = thischat.uuid;
