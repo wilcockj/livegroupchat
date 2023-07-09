@@ -8,6 +8,10 @@ import (
 	"sync"
 )
 
+var activeConnections int = 0
+
+const MAX_MESSAGE_LEN int = 2000
+
 var (
 	clients   = make(map[*websocket.Conn]bool) // connected clients
 	broadcast = make(chan Message)             // broadcast channel
@@ -23,12 +27,18 @@ type Message struct {
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Received WS connection request")
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("Error upgrading to WS:", err)
 		return
 	}
+	activeConnections++
+	fmt.Println("Received WS connection request now we have", activeConnections, "connections")
+    ip := r.Header.Get("X-FORWARDED-FOR")
+	if ip == "" {
+		ip = r.RemoteAddr
+	}
+    log.Println("Came from", ip)
 	defer ws.Close()
 
 	// Register the new client
@@ -45,7 +55,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if string(message) == "__ping__" {
-			log.Println("sending pong to") // add ip
+			log.Println("sending pong to",ip) // add ip
 			if err := ws.WriteMessage(messageType, []byte("__pong__")); err != nil {
 				log.Println(err)
 				return
