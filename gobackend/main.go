@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 )
 
@@ -34,11 +35,11 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	activeConnections++
 	fmt.Println("Received WS connection request now we have", activeConnections, "connections")
-    ip := r.Header.Get("X-FORWARDED-FOR")
+	ip := r.Header.Get("X-FORWARDED-FOR")
 	if ip == "" {
 		ip = r.RemoteAddr
 	}
-    log.Println("Came from", ip)
+	log.Println("Came from", ip)
 	defer ws.Close()
 
 	// Register the new client
@@ -55,7 +56,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if string(message) == "__ping__" {
-			log.Println("sending pong to",ip) // add ip
+			log.Println("sending pong to", ip) // add ip
 			if err := ws.WriteMessage(messageType, []byte("__pong__")); err != nil {
 				log.Println(err)
 				return
@@ -85,6 +86,11 @@ func handleMessages() {
 }
 
 func main() {
+	var PORT string = "8089"
+	if os.Getenv("BACKEND_MODE") == "production" {
+		PORT = "443"
+	}
+
 	fs := http.FileServer(http.Dir("./public"))
 	http.Handle("/", fs)
 
@@ -93,9 +99,11 @@ func main() {
 	// start handling broadcast messages
 	go handleMessages()
 
-	log.Println("http server started on :8089")
-	err := http.ListenAndServe(":8089", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+	if os.Getenv("BACKEND_MODE") == "production" {
+		fmt.Println("Starting production server on port", PORT)
+		log.Fatal(http.ListenAndServeTLS(":"+PORT, "/etc/letsencrypt/live/yourdomain/fullchain.pem", "/etc/letsencrypt/live/yourdomain/privkey.pem", nil))
+	} else {
+		fmt.Println("Starting dev server on port", PORT)
+		log.Fatal(http.ListenAndServe(":"+PORT, nil))
 	}
 }
