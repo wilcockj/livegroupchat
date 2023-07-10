@@ -19,6 +19,7 @@ const nameinput = document.getElementById("nameinput");
 const namedisplay = document.getElementById("curname");
 const chats = document.querySelector('[data-chat="chats"]');
 const MAX_LENGTH = 2000;
+const BACKOFF_NUM = 2;
 chats.scrollIntoView(false);
 const connstatus = document.querySelector('[data-chat="connectionstatus"]');
 let user = { useruuid: crypto.randomUUID(), username: "" };
@@ -29,7 +30,7 @@ const localStorageKey = "darkModeEnabled";
 const linkRegex = /(https?\:\/\/)?(www\.)?[^\s]+\.[^\s]+/g;
 
 var lastpingsent = 0;
-var initialbackoff = 2; // number of pingintervals to wait before trying new websocket
+var initialbackoff = BACKOFF_NUM; // number of pingintervals to wait before trying new websocket
                         // initially
 var pingIntervalWithJitter = 4800 + Math.floor(Math.random() * 500); 
 console.log("Ping interval is", pingIntervalWithJitter);
@@ -211,6 +212,9 @@ const pingInterval = setInterval(() => {
     connstatus.textContent = "Not Connected";
     socket.close(); // close socket before retry
     socket = getSocket();
+    initialbackoff = BACKOFF_NUM;
+    lastpingsent = 0;
+    return;
   }
   if (lastpingsent == 0 && initialbackoff > 0){
       initialbackoff--; 
