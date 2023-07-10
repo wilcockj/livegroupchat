@@ -31,8 +31,8 @@ const linkRegex = /(https?\:\/\/)?(www\.)?[^\s]+\.[^\s]+/g;
 
 var lastpingsent = 0;
 var initialbackoff = BACKOFF_NUM; // number of pingintervals to wait before trying new websocket
-                        // initially
-var pingIntervalWithJitter = 4800 + Math.floor(Math.random() * 500); 
+// initially
+var pingIntervalWithJitter = 4800 + Math.floor(Math.random() * 500);
 console.log("Ping interval is", pingIntervalWithJitter);
 
 function getSocket() {
@@ -116,25 +116,24 @@ function newchat() {
 }
 
 function linkreplacer(matched) {
-  let withProtocol = matched
-  
-  if(!withProtocol.startsWith("http")) {
-    withProtocol = "http://" + matched
+  let withProtocol = matched;
+
+  if (!withProtocol.startsWith("http")) {
+    withProtocol = "http://" + matched;
   }
- 
+
   const newStr = `<a
     class="text-link"
     href="${withProtocol}"
   >
     ${matched}
-  </a>`
-  
-  return newStr
+  </a>`;
+
+  return newStr;
 }
 
-
-function replaceEmoteKeywordWithImage(chatlog){
-    function escapeHtml(text) {
+function replaceEmoteKeywordWithImage(chatlog) {
+  function escapeHtml(text) {
     const map = {
       "&": "&amp;",
       "<": "&lt;",
@@ -174,7 +173,7 @@ function updateoraddchat(thischat) {
     chatlog = `Anon : ${thischat.message}`;
   }
 
-  chatlog = now.toTimeString().slice(0,8)+ " " + chatlog;
+  chatlog = now.toTimeString().slice(0, 8) + " " + chatlog;
   // Function to escape HTML entities
   chatlog = chatlog.replace(linkRegex, linkreplacer);
   chatlog = replaceEmoteKeywordWithImage(chatlog);
@@ -202,6 +201,8 @@ const pingInterval = setInterval(() => {
     console.log("sending ping");
     socket.send("__ping__");
     lastpingsent = Date.now();
+  } else if (socket.readyState == 0) {
+    console.log("socket still connecting");
   } else if (lastpingsent != 0 || initialbackoff == 0) {
     // if initial backoff is 0 we have tried that many
     // times to wait with no communication
@@ -216,8 +217,8 @@ const pingInterval = setInterval(() => {
     lastpingsent = 0;
     return;
   }
-  if (lastpingsent == 0 && initialbackoff > 0){
-      initialbackoff--; 
+  if (lastpingsent == 0 && initialbackoff > 0) {
+    initialbackoff--;
   }
 }, pingIntervalWithJitter);
 
@@ -257,7 +258,9 @@ nameinput.addEventListener("keyup", function (e) {
     nameinput.value = "";
     chat.username = user.username;
 
-    let nameoutputwithemote = replaceEmoteKeywordWithImage("Your name is: " + user.username);
-    namedisplay.innerHTML = nameoutputwithemote; 
+    let nameoutputwithemote = replaceEmoteKeywordWithImage(
+      "Your name is: " + user.username
+    );
+    namedisplay.innerHTML = nameoutputwithemote;
   }
 });
