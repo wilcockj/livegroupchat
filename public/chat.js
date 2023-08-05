@@ -245,6 +245,7 @@ textinput.addEventListener("input", () => {
 
   if (!chat.finished) {
     chat.message = textinput.value;
+    chat.timestamp = Date.now();
     updateoraddchat(chat);
 
     socket.send(JSON.stringify(chat));
