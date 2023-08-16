@@ -144,9 +144,20 @@ func main() {
 
 	if os.Getenv("BACKEND_MODE") == "production" {
 		fmt.Println("Starting production server on port", PORT)
+        go http.ListenAndServe(":80", http.HandlerFunc(redirect))
 		log.Fatal(http.ListenAndServeTLS(":"+PORT, "/etc/letsencrypt/live/swiftnotes.net/fullchain.pem", "/etc/letsencrypt/live/swiftnotes.net/privkey.pem", nil))
 	} else {
 		fmt.Println("Starting dev server on port", PORT)
 		log.Fatal(http.ListenAndServe(":"+PORT, nil))
 	}
+}
+
+// redirect redirects HTTP requests to HTTPS
+func redirect(w http.ResponseWriter, req *http.Request) {
+    // Use the Host header from the incoming request to construct the redirect URL
+    target := "https://" + req.Host + req.URL.Path 
+    if len(req.URL.RawQuery) > 0 {
+        target += "?" + req.URL.RawQuery
+    }
+    http.Redirect(w, req, target, http.StatusMovedPermanently)
 }
